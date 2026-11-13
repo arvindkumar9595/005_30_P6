@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Metro Station Anomaly Reporter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css"></head><body>
+<nav aria-label="Main"><b>Metro Anomaly Reporter</b><button id="menu" aria-label="Toggle menu" aria-expanded="false">Menu</button>
+<div id="links"></div><select id="role" aria-label="Role"><option>Admin</option><option>User</option><option>Handler</option></select><button id="theme" aria-label="Toggle light or dark theme">Theme</button></nav>
+<main>
+<section id="p-home"><div class="hero"><h1>Every anomaly reaches the right control room.</h1>
+<p>Report a problem at any station. The system checks your codes, sorts the report into one of five categories and sends it to the East, West or Central corridor. Medical cases go straight to the emergency line.</p>
+<div class="f"><a class="btn pri" href="#report" style="display:inline-flex;align-items:center;text-decoration:none">Report an anomaly</a><a class="btn" href="#track" style="display:inline-flex;align-items:center;text-decoration:none">Track a report</a></div></div>
+<svg viewBox="0 0 900 110" width="100%" role="img" aria-label="Animated metro line with a train travelling between East, Central and West stations"><path d="M40 70H860" stroke="var(--bd)" stroke-width="10" stroke-linecap="round"/><path d="M40 70H300" stroke="var(--E)" stroke-width="10" stroke-linecap="round"/><path d="M300 70H600" stroke="var(--C)" stroke-width="10"/><path d="M600 70H860" stroke="var(--W)" stroke-width="10" stroke-linecap="round"/>
+<g fill="var(--bg)" stroke="var(--tx)" stroke-width="4"><circle cx="40" cy="70" r="12"/><circle cx="300" cy="70" r="12"/><circle cx="600" cy="70" r="12"/><circle cx="860" cy="70" r="12"/></g>
+<g fill="var(--tx)" font-size="14" text-anchor="middle" font-family="Sora"><text x="40" y="104">East</text><text x="300" y="104">Central</text><text x="600" y="104">Central Emergency</text><text x="860" y="104">West</text></g>
+<g class="train"><rect x="20" y="36" width="70" height="26" rx="8" fill="var(--M)"/><rect x="28" y="42" width="12" height="9" rx="2" fill="#fff"/><rect x="46" y="42" width="12" height="9" rx="2" fill="#fff"/><rect x="64" y="42" width="12" height="9" rx="2" fill="#fff"/></g></svg>
+<div class="grid" id="homeStats"></div></section>
+
+<section id="p-report" hidden><h2>Report an anomaly</h2><div class="grid"><form class="card" id="rf" novalidate>
+<label for="nm">Your name</label><input id="nm" value="Ravi Kumar"><label for="ct">Contact</label><input id="ct" value="9876543210">
+<label for="st">Station code (STA + 2 letters + 3 digits)</label><input id="st" placeholder="STAEA101" autocomplete="off"><div class="msg" id="vs" role="status"></div>
+<label for="an">Anomaly code (A + 2 digits)</label><input id="an" placeholder="A03" autocomplete="off"><div class="msg" id="va" role="status"></div>
+<label for="ds">Description</label><textarea id="ds" rows="3" placeholder="What is happening?"></textarea>
+<label for="ur">Urgency</label><select id="ur"><option>Low</option><option selected>Medium</option><option>High</option><option>Critical</option></select><br><button class="btn pri" type="submit">Submit report</button></form>
+<div><div class="card"><h3>Live check</h3><div id="badges" class="mut">Start typing to see the category and priority.</div><div class="msg" id="note"></div><p class="mut" style="margin-bottom:2px">DFA path for the station code</p><div id="tr"></div></div><div id="conf"></div></div></div></section>
+
+<section id="p-track" hidden><h2>Track reports</h2><div class="grid" id="cnt"></div><div class="card"><label for="q">Search by report ID</label><div class="f"><input id="q" placeholder="MSA-…-0001" style="flex:1;min-width:200px"><button class="btn pri" id="qb">Find report</button></div><div id="qr"></div></div><div class="card tw"><h3>Recent reports</h3><table id="recent"></table></div></section>
+
+<section id="p-handler" hidden><h2>Handler dashboard</h2><div class="card"><label for="hs">Handler</label><select id="hs"></select><div id="hd"></div></div></section>
+
+<section id="p-routing" hidden><h2>Routing management</h2><div class="card tw"><h3>Routing table</h3><table id="rt"></table></div>
+<div class="grid"><div class="card"><h3>Handler loads</h3><div id="loads"></div></div><div class="card"><h3>Waiting and correction queue</h3><div id="queue"></div></div></div>
+<div class="card"><h3>Dispatch flow</h3><svg viewBox="0 0 900 150" width="100%" role="img" aria-label="Dispatch flow from report to handler, escalation or queue"><g font-size="13" font-family="Sora" text-anchor="middle" fill="var(--tx)"><g fill="var(--card)" stroke="var(--bd)"><rect x="10" y="20" width="140" height="44" rx="10"/><rect x="190" y="20" width="140" height="44" rx="10"/><rect x="370" y="20" width="140" height="44" rx="10"/><rect x="550" y="20" width="140" height="44" rx="10"/><rect x="730" y="20" width="150" height="44" rx="10"/></g><g stroke="var(--mut)" stroke-width="2"><path d="M150 42h40M330 42h40M510 42h40M690 42h40"/></g><text x="80" y="47">Report</text><text x="260" y="47">DFA + regex</text><text x="440" y="47">Classify</text><text x="620" y="47">Routing table</text><text x="805" y="47">Handler / backup</text>
+<path d="M440 64V112H805" fill="none" stroke="var(--M)" stroke-width="3"/><rect x="560" y="96" width="250" height="32" rx="10" fill="var(--M)"/><text x="685" y="117" fill="#fff">Medical: always Central Emergency Line</text><text x="805" y="86" fill="var(--mut)">else escalate or queue</text></g></svg></div>
+<div class="card"><h3>Decision log</h3><div class="f" id="lf"></div><div class="tw"><table id="log"></table></div></div></section>
+
+<section id="p-analytics" hidden><h2>Analytics</h2><div class="grid"><div class="card"><h3>By zone</h3><div id="az"></div></div><div class="card"><h3>By category</h3><div id="ac"></div></div><div class="card"><h3>Resolved or unresolved</h3><div id="ar"></div><p class="num" id="avg"></p><span class="mut">average minutes to resolve</span></div></div><div class="card"><h3>Reports over time</h3><div id="trend"></div></div></section>
+
+<section id="p-lab" hidden><h2>Automata lab</h2><div class="card"><div class="grid"><div><label for="lt">Code type</label><select id="lt"><option value="st">Station code</option><option value="an">Anomaly code</option></select></div><div><label for="li">Input</label><input id="li" value="STAEA101" autocomplete="off"></div></div>
+<div class="grid" id="cmp" style="margin-top:12px"></div><div id="ltr"></div><div class="tw"><div id="dg"></div></div><p class="mut" id="tuple"></p></div>
+<div class="card tw"><div class="f"><h3 style="margin:0;flex:1">Test cases</h3><button class="btn pri" id="run">Run all</button></div><table id="tests"></table></div></section>
+</main><div id="toast" role="status" aria-live="polite"></div>
+<script src="js/utils.js"></script>
+<script src="js/automata.js"></script>
+<script src="js/dispatcher.js"></script>
+<script src="js/seed.js"></script>
+<script src="js/ui.js"></script></body></html>
